@@ -1,0 +1,9 @@
+{
+    "name": "meraki/graphql",
+    "description": "N/A",
+    "type": "magento2-module",
+    "require": {
+        "php": "~7.3.0||~7.4.0"
+    },
+    "version": "0.1.0"
+}
