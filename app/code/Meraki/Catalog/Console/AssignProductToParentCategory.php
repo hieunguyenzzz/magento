@@ -47,28 +47,32 @@ class AssignProductToParentCategory extends Command
          */
         foreach ($categories as $category) {
             echo "---" . $category->getName() . "\n";
-            $skus = $this->_getAllSkus($category);
-            echo "assigning " . sizeof($skus) . "\n";
-            foreach ($skus as $sku) {
-                $this->categoryLinkManagement->assignProductToCategories($sku, [$category->getId()]);
+            $products = $this->_getAllChildProduct($category);
+            echo "assigning " . sizeof($products) . "\n";
+            /**
+             * @var $product \Magento\Catalog\Model\Product
+             */
+            foreach ($products as $product) {
+                $this->categoryLinkManagement->assignProductToCategories($product->getSku(), array_merge($product->getCategoryIds(), [$category->getId()]));
             }
         }
     }
 
     /**
      * @param $category  \Magento\Catalog\Model\Category
+     * @return array
      */
-    protected function _getAllSkus($category)
+    protected function _getAllChildProduct($category)
     {
         $result = [];
 
         foreach ($category->getProductCollection() as $product) {
-            $result[] = $product->getSku();
+            $result[] = $product;
         }
 
         foreach ($category->getChildrenCategories() as $child) {
-            echo $child->getName() ."\n";
-            $result = array_merge($result, $this->_getAllSkus($child));
+            echo $child->getName() . "\n";
+            $result = array_merge($result, $this->_getAllChildProduct($child));
         }
 
         return $result;
